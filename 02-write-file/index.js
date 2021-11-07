@@ -3,12 +3,16 @@ const fs = require("fs");
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
-  prompt: "Enter some text: ",
+  prompt: "",
 });
 
 rl.prompt();
 
 rl.on("line", (line) => {
+  if (line === "exit") {
+    console.log("Have a nice day!");
+    process.exit(0);
+  }
   writeLine(line);
   rl.prompt();
 }).on("close", () => {
@@ -17,7 +21,7 @@ rl.on("line", (line) => {
 });
 
 function writeLine(line) {
-  fs.writeFile("./02-write-file/text.txt", line, (err) => {
+  fs.appendFile("./02-write-file/text.txt", `\n${line}`, (err) => {
     if (err) throw err;
   });
 }
