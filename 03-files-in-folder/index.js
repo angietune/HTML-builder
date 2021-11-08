@@ -1,29 +1,27 @@
 const path = require("path");
-const fs = require("fs");
-fs.readdir(
-  "03-files-in-folder/secret-folder",
-  { withFileTypes: true },
-  function (err, files) {
-    try {
-      filesList(files);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-);
+const fs = require("fs/promises");
+try {
+  fs.readdir("03-files-in-folder/secret-folder", {
+    withFileTypes: true,
+  }).then((data) => filesList(data));
+} catch (err) {
+  console.log(err);
+}
 
 function filesList(files) {
-  files.map(async (file) => {
+  files.map((file) => {
     if (file.isFile()) {
-      let fileName = file.name;
-      let fileExt = path.extname(file.name);
+      let fileName = file.name.replace(/\.[^/.]+$/, "");
+      let fileExt = path.extname(file.name).replace(/\./g, "");
       const fileStats = fs.stat(
-        `./secret-folder/${fileName}`,
+        `03-files-in-folder/secret-folder/${file.name}`,
         function (err, stats) {
           return stats;
         }
       );
-      console.log(fileName + " - " + fileExt + " - " + fileStats);
+      fileStats.then((data) => {
+        console.log(fileName + " - " + fileExt + " - " + data.size + "kb");
+      });
     }
   });
 }
